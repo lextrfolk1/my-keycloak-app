@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import keycloak from "./keyclock";
-import { AuthContext } from "./authContext";
-
+import { AuthContext } from "./AuthContext";
 
 export function KeycloakAuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true); // 
+  const [loading, setLoading] = useState(true);
   const initCalled = useRef(false);
 
   useEffect(() => {
@@ -14,41 +13,38 @@ export function KeycloakAuthProvider({ children }) {
 
       keycloak
         .init({ onLoad: "login-required", checkLoginIframe: false })
-        .then(auth => {
-          if (auth) {
+        .then((authenticated) => {
+          if (authenticated) {
             keycloak.loadUserProfile().then(setProfile);
 
-            // 🔄 Setup token auto-refresh
             setInterval(() => {
               keycloak
-                .updateToken(60) // refresh if < 60s left
-                .then(refreshed => {
-                  if (refreshed) {
-                    console.log("🔑 Token refreshed");
-                  }
+                .updateToken(60)
+                .then((refreshed) => {
+                  if (refreshed) console.log("🔑 Token refreshed");
                 })
                 .catch(() => {
-                  console.warn("❌ Failed to refresh token, logging out");
+                  console.warn("Token refresh failed—logging out");
                   keycloak.logout({ redirectUri: window.location.origin });
                 });
-            }, 30000); // check every 30s
+            }, 30000);
           }
         })
-        .finally(() => setLoading(false))
-        .catch(err => console.error("❌ Keycloak init failed:", err));
+        .catch((err) => console.error("Keycloak init failed", err))
+        .finally(() => setLoading(false));
     }
   }, []);
 
-  const login = () => keycloak.login();
-  const logout = () => keycloak.logout({ redirectUri: window.location.origin });
-
   return (
-    <AuthContext.Provider value={{ profile, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        profile,
+        loading,
+        login: () => keycloak.login(),
+        logout: () => keycloak.logout({ redirectUri: window.location.origin })
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  return useContext(AuthContext);
 }

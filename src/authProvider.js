@@ -10,9 +10,6 @@ console.log("SSO Enabled:", enableSSO);
 
 
 export function AuthProvider({ children }) {
-  if (enableSSO) {
-    return <KeycloakAuthProvider>{children}</KeycloakAuthProvider>;
-  } else {
-    return <LocalAuthProvider>{children}</LocalAuthProvider>;
+  return enableSSO ? (<KeycloakAuthProvider>{children}</KeycloakAuthProvider>) : ( <LocalAuthProvider>{children}</LocalAuthProvider> ) ;
   }
-}
+export const useAuth = () => React.useContext(require("./AuthContext").AuthContext);

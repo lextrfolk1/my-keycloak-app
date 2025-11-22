@@ -1,14 +1,11 @@
 import React, { useState } from "react";
-import { useAuth } from "./LocalAuthProvider"; // or keycloakProvider, both export same API
+import { useAuth } from "./AuthContext";
 
 function App() {
-  const { profile, login, logout,loading } = useAuth();
+  const { profile, login, logout, loading } = useAuth();
   const [username, setUsername] = useState("");
-    
-  if(loading){
-    return <div>Loading authentication...</div>
-  }
 
+  if (loading) return <div>Loading authentication...</div>;
 
   if (!profile) {
     return login ? (
@@ -32,7 +29,6 @@ function App() {
       <h2>
         Welcome, {profile.firstName} {profile.lastName}
       </h2>
-      <p>Username: {profile.username}</p>
       <p>Email: {profile.email}</p>
       <button onClick={logout}>Logout</button>
     </div>

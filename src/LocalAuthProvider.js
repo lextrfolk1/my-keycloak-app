@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "./authContext";
+import React, { useEffect, useState } from "react";
+import { AuthContext } from "./AuthContext";
 
 export function LocalAuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
+  const [loading] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("localUser");
@@ -10,14 +11,14 @@ export function LocalAuthProvider({ children }) {
   }, []);
 
   const login = (username) => {
-    const fakeProfile = {
+    const fake = {
       username,
       firstName: username,
-      lastName: "(Local)",
+      lastName: "Local",
       email: `${username}@local.dev`,
     };
-    setProfile(fakeProfile);
-    localStorage.setItem("localUser", JSON.stringify(fakeProfile));
+    setProfile(fake);
+    localStorage.setItem("localUser", JSON.stringify(fake));
   };
 
   const logout = () => {
@@ -26,12 +27,8 @@ export function LocalAuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ profile, login, logout }}>
+    <AuthContext.Provider value={{ profile, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  return useContext(AuthContext);
 }

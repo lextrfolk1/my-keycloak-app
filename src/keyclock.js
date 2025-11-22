@@ -1,7 +1,7 @@
 import Keycloak from 'keycloak-js';
 
 const keycloak = new Keycloak({
-            url: 'http://136.114.132.65',
+            url: 'http://34.121.126.155/',
             realm: 'entlrealm',
             clientId: 'entl-frontend',
         });

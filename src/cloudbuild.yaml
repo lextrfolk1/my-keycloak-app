@@ -1,0 +1,27 @@
+steps:
+  # ============================
+  # Build Next.js Frontend Image
+  # ============================
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '-t',
+        'us-central1-docker.pkg.dev/tejal-project/tejal-projects/frontend:latest',
+        '-f',
+        'Dockerfile',
+        '.'
+      ]
+
+  # ============================
+  # Push Frontend Image
+  # ============================
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/tejal-project/tejal-projects/frontend:latest'
+      ]
+
+images:
+  - 'us-central1-docker.pkg.dev/tejal-project/tejal-projects/frontend:latest'
